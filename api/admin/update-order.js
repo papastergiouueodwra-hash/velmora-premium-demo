@@ -1,4 +1,4 @@
-const { json, isAdmin, sameOrigin } = require('../_lib/auth');
+const { json, isAdmin, sameOrigin } = require('../../lib/auth');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'PATCH') {
