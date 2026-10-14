@@ -121,7 +121,7 @@ body{background:var(--paper);letter-spacing:.005em}
 
 /* Real Dreamina clip + a small candle overlay that extinguishes before the fire wipe */
 .velmora-intro-image{z-index:0}
-.velmora-intro-video{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;background:#10090a}
+.velmora-intro-video{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:contain!important;object-position:50% 50%;background:#000!important}
 .velmora-intro-video.is-hidden{display:none}
 .velmora-candle{position:absolute;z-index:3;left:clamp(80px,19vw,270px);top:53%;width:clamp(100px,10vw,145px);height:clamp(260px,40vh,360px);transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45));animation:candleAppear .5s ease-out both}
 .velmora-candle-body{position:absolute;bottom:0;left:8%;width:84%;height:76%;border-radius:13px 13px 9px 9px;background:linear-gradient(90deg,#4e3930 0%,#8c6b54 9%,#c9ad8e 20%,#f5e5cd 34%,#fff4df 47%,#e6cdb0 61%,#b48b6c 82%,#604538 100%);box-shadow:inset 4px 0 8px #fff5e488,inset -5px 0 9px #38231d55,0 10px 20px #0006}
@@ -268,9 +268,7 @@ body{background:#171214;color:var(--ink)}
 
 <div class="velmora-intro" id="velmoraIntro" aria-label="VELMORA — cinematic intro" role="presentation">
   <img class="velmora-intro-image" id="velmoraIntroImage" src="https://raw.githubusercontent.com/papastergiouueodwra-hash/velmora-premium-demo/main/lips.jpg" alt="" aria-hidden="true">
-  <video class="velmora-intro-video" id="velmoraIntroVideo" autoplay muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true">
-    <source src="https://raw.githubusercontent.com/papastergiouueodwra-hash/velmora-premium-demo/main/PixVerse_V6_Fusion_540P_image1__image2_Create_.mp4" type="video/mp4">
-  </video>
+  <img class="velmora-intro-video" id="velmoraIntroAnimation" src="https://raw.githubusercontent.com/papastergiouueodwra-hash/velmora-premium-demo/main/PixVerse_V6_Fusion_540P_image1__image2_Create_.webp" alt="" aria-hidden="true" fetchpriority="high">
   <div class="velmora-loading" aria-hidden="true">
     <div class="velmora-loading-heading"><span>VELMORA</span><span id="velmoraLoadingPercent">0%</span></div>
     <div class="velmora-loading-track"><div class="velmora-loading-progress" id="velmoraLoadingProgress"></div></div>
@@ -338,7 +336,7 @@ $('#closeAdmin').onclick=()=>$('#adminPanel').classList.remove('open');$('#saveA
 (()=>{
  const intro=document.getElementById('velmoraIntro');
  if(!intro)return;
- const video=document.getElementById('velmoraIntroVideo');
+ const animation=document.getElementById('velmoraIntroAnimation');
  let removed=false, fallback, progressTimer;
  const percent=document.getElementById('velmoraLoadingPercent');
  const bar=document.getElementById('velmoraLoadingProgress');
@@ -361,52 +359,17 @@ $('#closeAdmin').onclick=()=>$('#adminPanel').classList.remove('open');$('#saveA
    intro.classList.add('is-gone');
    window.setTimeout(()=>intro.remove(),1250);
  };
- if(!video){fallback=window.setTimeout(reveal,9000);return;}
- // Percentage ticks up quickly while the cinematic video plays.
- video.addEventListener('ended',()=>window.setTimeout(reveal,180),{once:true});
- video.addEventListener('error',()=>window.setTimeout(reveal,700),{once:true});
- let durationFallbackSet=false;
- const setDurationFallback=()=>{
-   if(durationFallbackSet||!Number.isFinite(video.duration)||video.duration<=0)return;
-   durationFallbackSet=true;
-   window.clearTimeout(fallback);
-   // Let the entire clip play, including the final fire wipe, before revealing the shop.
-   fallback=window.setTimeout(reveal,Math.ceil(video.duration*1000)+1800);
- };
- video.addEventListener('loadedmetadata',setDurationFallback,{once:true});
- video.addEventListener('durationchange',setDurationFallback,{once:true});
- // Start muted inline playback as early as possible on mobile browsers.
- // A browser may still block autoplay due to its own media policy.
- video.controls=false;
- video.autoplay=true;
- video.muted=true;
- video.defaultMuted=true;
- video.playsInline=true;
- video.setAttribute('autoplay','');
- video.setAttribute('muted','');
- video.setAttribute('playsinline','');
- video.setAttribute('webkit-playsinline','');
- video.setAttribute('disablepictureinpicture','');
- const attemptPlay=()=>{
-   if(removed||document.hidden||!video.paused)return;
-   video.muted=true;
-   video.defaultMuted=true;
-   try{
-     const attempt=video.play();
-     if(attempt&&typeof attempt.catch==='function')attempt.catch(()=>{});
-   }catch(_){}
- };
- video.addEventListener('loadedmetadata',attemptPlay);
- video.addEventListener('loadeddata',attemptPlay);
- video.addEventListener('canplay',attemptPlay);
- video.addEventListener('canplaythrough',attemptPlay);
- document.addEventListener('visibilitychange',()=>{if(!document.hidden)attemptPlay()});
- // Explicit load helps Safari/iOS begin fetching after the muted/inline flags are set.
- video.load();
- attemptPlay();
- // Do not use a short fixed timeout: it cut off the fire ending on longer/mobile loads.
- // This is only a safety exit if the video never reports its duration.
- fallback=window.setTimeout(()=>{if(!durationFallbackSet)reveal()},30000);
+ // Animated WebP plays without the mobile video-autoplay restriction.
+ // Keep the intro visible long enough for the complete fire ending.
+ const playIntro=()=>{if(!removed){window.clearTimeout(fallback);fallback=window.setTimeout(reveal,9000)}};
+ if(animation){
+   animation.addEventListener('load',playIntro,{once:true});
+   animation.addEventListener('error',()=>window.setTimeout(reveal,700),{once:true});
+   if(animation.complete&&animation.naturalWidth>0)playIntro();
+   fallback=window.setTimeout(()=>{if(!animation.complete)reveal()},15000);
+ }else{
+   fallback=window.setTimeout(reveal,9000);
+ }
 })();
 </script>
 
