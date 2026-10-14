@@ -1,3 +1,4 @@
+const { neon } = require('@neondatabase/serverless');
 const { json, sameOrigin } = require('../lib/auth');
 
 function clean(value, max = 300) {
@@ -10,12 +11,8 @@ module.exports = async function handler(req, res) {
     return json(res, 405, { error: 'Method not allowed' });
   }
   if (!sameOrigin(req)) return json(res, 403, { error: 'Invalid origin' });
-
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !supabaseKey) {
-    return json(res, 503, { error: 'Το CRM δεν έχει συνδεθεί ακόμη με τη βάση δεδομένων.' });
-  }
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) return json(res, 503, { error: 'Το CRM δεν έχει συνδεθεί ακόμη με τη βάση Neon.' });
 
   try {
     const body = req.body || {};
@@ -41,43 +38,20 @@ module.exports = async function handler(req, res) {
       return json(res, 400, { error: 'Έλεγξε τα στοιχεία της παραγγελίας και προσπάθησε ξανά.' });
     }
 
-    // This is a demo checkout. Amounts are recorded for CRM demonstration only;
-    // no payment is collected and no shipment is created.
+    // Demo only: amounts are calculated server-side; no payment or shipment is initiated.
     const subtotal = Math.round(items.reduce((sum, item) => sum + item.quantity * item.unit_price, 0) * 100) / 100;
     const shippingCost = shipping === 'pickup' ? 0 : 3;
     const total = Math.round((subtotal + shippingCost) * 100) / 100;
     const orderNumber = 'VM-DEMO-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
-    const record = {
-      order_number: orderNumber,
-      customer_first_name: firstName,
-      customer_last_name: lastName,
-      email, phone, address, city, postal_code: postal,
-      shipping_method: shipping,
-      payment_method: payment,
-      items, subtotal, shipping_cost: shippingCost, total,
-      status: 'new',
-      is_demo: true
-    };
-
-    const endpoint = supabaseUrl.replace(/\/$/, '') + '/rest/v1/orders';
-    const upstream = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        apikey: supabaseKey,
-        Authorization: 'Bearer ' + supabaseKey,
-        'Content-Type': 'application/json',
-        Prefer: 'return=minimal'
-      },
-      body: JSON.stringify(record)
-    });
-    if (!upstream.ok) {
-      const detail = await upstream.text();
-      console.error('VELMORA order insert failed:', upstream.status, detail.slice(0, 300));
-      return json(res, 502, { error: 'Δεν ήταν δυνατή η αποθήκευση της παραγγελίας. Δοκίμασε ξανά.' });
-    }
+    const sql = neon(connectionString);
+    await sql`INSERT INTO orders
+      (order_number, customer_first_name, customer_last_name, email, phone, address, city, postal_code,
+       shipping_method, payment_method, items, subtotal, shipping_cost, total, status, is_demo)
+      VALUES (${orderNumber}, ${firstName}, ${lastName}, ${email}, ${phone}, ${address}, ${city}, ${postal},
+       ${shipping}, ${payment}, ${JSON.stringify(items)}::jsonb, ${subtotal}, ${shippingCost}, ${total}, 'new', TRUE)`;
     return json(res, 201, { ok: true, orderNumber, total, shippingCost });
   } catch (error) {
-    console.error('VELMORA order API error:', error && error.message);
-    return json(res, 500, { error: 'Παρουσιάστηκε σφάλμα. Δοκίμασε ξανά.' });
+    console.error('VELMORA Neon order insert failed:', error && error.message);
+    return json(res, 500, { error: 'Δεν ήταν δυνατή η αποθήκευση της παραγγελίας. Δοκίμασε ξανά.' });
   }
 };
