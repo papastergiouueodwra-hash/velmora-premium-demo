@@ -126,8 +126,8 @@ body{background:var(--paper);letter-spacing:.005em}
 .velmora-intro-mobile-media{display:none}
 .velmora-intro-desktop-media{display:block}
 @media(max-width:600px){
- .velmora-intro-mobile-media{display:block}
- .velmora-intro-desktop-media{display:none}
+ .velmora-intro-mobile-media{display:none}
+ .velmora-intro-desktop-media{display:block}
 }
 .velmora-candle{position:absolute;z-index:3;left:clamp(80px,19vw,270px);top:53%;width:clamp(100px,10vw,145px);height:clamp(260px,40vh,360px);transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45));animation:candleAppear .5s ease-out both}
 .velmora-candle-body{position:absolute;bottom:0;left:8%;width:84%;height:76%;border-radius:13px 13px 9px 9px;background:linear-gradient(90deg,#4e3930 0%,#8c6b54 9%,#c9ad8e 20%,#f5e5cd 34%,#fff4df 47%,#e6cdb0 61%,#b48b6c 82%,#604538 100%);box-shadow:inset 4px 0 8px #fff5e488,inset -5px 0 9px #38231d55,0 10px 20px #0006}
@@ -154,7 +154,7 @@ body{background:var(--paper);letter-spacing:.005em}
 .velmora-intro.is-gone{opacity:0;visibility:hidden;pointer-events:none}
 .velmora-intro-video{z-index:2;object-fit:cover;object-position:center;background:#000!important}
 /* Mobile: show the entire intro frame without cropping or zooming */
-@media(max-width:600px){.velmora-intro{height:100vh;height:100dvh;background:#000!important}.velmora-intro-video{object-fit:contain!important;object-position:center center!important;width:100%;height:100%;background:#000!important;transform:scale(1.08)!important}}
+@media(max-width:600px){.velmora-intro{height:100vh;height:100dvh;background:#000!important}.velmora-intro-video{object-fit:contain!important;object-position:center center!important;width:100%;height:100%;background:#000!important;transform:none!important}}
 .velmora-intro:before,.velmora-intro-image,.velmora-candle,.velmora-fireburst,.velmora-intro-copy{display:none!important}
 .velmora-loading{position:absolute;z-index:5;left:50%;top:62%;width:min(340px,70vw);transform:translate(-50%,-50%);text-align:center;color:rgba(255,248,242,.98);font:11px 'DM Sans',sans-serif;letter-spacing:.34em;text-transform:uppercase;opacity:0;animation:loadingFadeIn .35s ease .22s forwards;text-shadow:0 2px 14px rgba(0,0,0,.7)}
 .velmora-loading-heading{display:flex;align-items:center;justify-content:space-between;font-size:10px;letter-spacing:.3em}
@@ -368,20 +368,8 @@ $('#closeAdmin').onclick=()=>$('#adminPanel').classList.remove('open');$('#saveA
    intro.classList.add('is-gone');
    window.setTimeout(()=>intro.remove(),1250);
  };
- if(mobile){
-   // Mobile uses the animated WebP so the intro is not blocked by video autoplay rules.
-   if(!animation){fallback=window.setTimeout(reveal,3500);return;}
-   // The animated WebP loops by default in mobile browsers. Close the intro after 4 seconds to avoid a second loop.
-   const onePlayMs=4000;
-   animation.addEventListener('load',()=>{
-     if(!removed){window.clearTimeout(fallback);fallback=window.setTimeout(reveal,onePlayMs);}
-   },{once:true});
-   animation.addEventListener('error',()=>window.setTimeout(reveal,700),{once:true});
-   if(animation.complete&&animation.naturalWidth>0)fallback=window.setTimeout(reveal,onePlayMs);
-   else fallback=window.setTimeout(()=>{if(!animation.complete)reveal()},15000);
-   return;
- }
- // Larger screens use the original MP4 to preserve its source quality.
+ // Use the original MP4 on both desktop and mobile.
+
  if(!video){fallback=window.setTimeout(reveal,9000);return;}
  video.addEventListener('ended',()=>window.setTimeout(reveal,180),{once:true});
  video.addEventListener('error',()=>window.setTimeout(reveal,700),{once:true});
