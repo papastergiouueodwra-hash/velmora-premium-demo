@@ -148,13 +148,13 @@ body{background:var(--paper);letter-spacing:.005em}
 .velmora-intro.is-gone{opacity:0;visibility:hidden;pointer-events:none}
 .velmora-intro-video{z-index:2;object-fit:cover;object-position:center;background:#10090a}
 .velmora-intro:before,.velmora-intro-image,.velmora-candle,.velmora-fireburst,.velmora-intro-copy{display:none!important}
-.velmora-loading{position:absolute;z-index:5;left:50%;bottom:clamp(36px,8vh,70px);width:min(220px,52vw);transform:translateX(-50%);text-align:center;color:rgba(255,244,237,.9);font:9px 'DM Sans',sans-serif;letter-spacing:.28em;text-transform:uppercase;opacity:0;animation:loadingFadeIn .35s ease .22s forwards}
-.velmora-loading-track{height:2px;width:100%;margin-top:12px;overflow:hidden;background:rgba(255,244,237,.24);box-shadow:0 0 10px rgba(255,190,160,.08)}
-.velmora-loading-progress{height:100%;width:0;background:linear-gradient(90deg,#b77b70,#fff0df);box-shadow:0 0 8px rgba(255,220,200,.6);animation:velmoraLoad 2.3s cubic-bezier(.22,.61,.36,1) forwards}
-.velmora-loading-label{display:block;margin-top:9px;font-size:8px;letter-spacing:.2em;color:rgba(255,235,224,.72)}
+.velmora-loading{position:absolute;z-index:5;left:50%;top:62%;width:min(340px,70vw);transform:translate(-50%,-50%);text-align:center;color:rgba(255,248,242,.98);font:11px 'DM Sans',sans-serif;letter-spacing:.34em;text-transform:uppercase;opacity:0;animation:loadingFadeIn .35s ease .22s forwards;text-shadow:0 2px 14px rgba(0,0,0,.7)}
+.velmora-loading-track{height:4px;width:100%;margin-top:15px;overflow:hidden;background:rgba(255,244,237,.38);box-shadow:0 0 14px rgba(255,190,160,.16);border:1px solid rgba(255,244,237,.25)}
+.velmora-loading-progress{height:100%;width:0;background:linear-gradient(90deg,#b77b70,#fff0df);box-shadow:0 0 12px rgba(255,220,200,.85);animation:velmoraLoad 2.3s cubic-bezier(.22,.61,.36,1) forwards}
+.velmora-loading-label{display:block;margin-top:10px;font-size:9px;letter-spacing:.24em;color:rgba(255,242,234,.92)}
 @keyframes velmoraLoad{0%{width:0}35%{width:58%}78%{width:88%}100%{width:100%}}
 @keyframes loadingFadeIn{to{opacity:1}}
-@media(max-width:600px){.velmora-loading{bottom:clamp(28px,7vh,56px);width:min(190px,58vw)}}
+@media(max-width:600px){.velmora-loading{top:62%;width:min(290px,76vw);font-size:10px}.velmora-loading-track{height:4px}}
 @media(prefers-reduced-motion:reduce){.velmora-intro{transition:opacity .3s ease,visibility .3s ease}.velmora-loading-progress{animation-duration:.8s}}
 </style>
 </head>
