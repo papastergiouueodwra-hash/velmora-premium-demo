@@ -101,31 +101,29 @@ body{background:var(--paper);letter-spacing:.005em}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
 
-/* VELMORA cinematic opening: extreme lip close-up, candle blowout, flame wipe */
+/* VELMORA cinematic opening: user's lips photo, animated close-up and fire wipe */
 .velmora-intro{position:fixed;inset:0;z-index:9999;overflow:hidden;background:#10090a;opacity:1;visibility:visible;transition:opacity .55s ease,visibility .55s ease}
 .velmora-intro.is-gone{opacity:0;visibility:hidden;pointer-events:none}
-.velmora-intro-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 64%;transform:scale(1.42);filter:brightness(.72) saturate(1.12) contrast(1.08);animation:lipCloseup 3.8s ease-out both}
+.velmora-intro-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;transform:scale(1.28);filter:brightness(.76) saturate(1.18) contrast(1.08);animation:lipCloseup 3.8s ease-out both}
 .velmora-intro:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(0deg,rgba(15,5,7,.62),transparent 55%),radial-gradient(ellipse at 50% 55%,transparent 18%,rgba(12,3,5,.28) 100%);pointer-events:none}
 .velmora-intro-copy{position:absolute;z-index:2;bottom:clamp(30px,7vh,68px);left:0;right:0;text-align:center;color:#fbf4ed;padding:20px;text-shadow:0 2px 18px #16080a}
 .velmora-intro-wordmark{font:400 clamp(28px,4.4vw,42px)/1.1 'Playfair Display',serif;letter-spacing:.3em;text-indent:.3em}
 .velmora-intro-caption{font:9px 'DM Sans',sans-serif;letter-spacing:.34em;text-transform:uppercase;margin-top:12px;color:#f0d7c9}
 .velmora-fireburst{position:absolute;z-index:4;inset:-45%;opacity:0;pointer-events:none;transform:scale(.025);transform-origin:50% 55%;background:radial-gradient(ellipse at 50% 55%,#fff9d5 0 3%,#ffd064 8%,#ff742b 17%,rgba(239,50,20,.94) 28%,rgba(126,14,26,.9) 42%,rgba(30,7,13,.98) 58%,transparent 72%),repeating-conic-gradient(from -12deg at 50% 55%,#ffb64e 0deg,#ff4a20 5deg,#6d101e 11deg,transparent 17deg,#ff7b2b 22deg,transparent 29deg);filter:blur(2px) saturate(1.25);mix-blend-mode:screen}
 .velmora-intro.is-blown .velmora-fireburst{animation:fireAcross .95s cubic-bezier(.2,.7,.2,1) forwards}
-.velmora-intro.is-blown .velmora-intro-video{animation:videoFlare .85s ease-in forwards}
+.velmora-intro.is-blown .velmora-intro-image{animation:imageFlare .85s ease-in forwards}
 @keyframes lipCloseup{0%{transform:scale(1.5);filter:brightness(.58) saturate(1.12) contrast(1.08)}65%{transform:scale(1.72);filter:brightness(.72) saturate(1.18) contrast(1.1)}100%{transform:scale(1.6);filter:brightness(.72) saturate(1.12) contrast(1.08)}}
 @keyframes fireAcross{0%{opacity:0;transform:scale(.025) rotate(-10deg)}22%{opacity:1}68%{opacity:.96;transform:scale(1.7) rotate(7deg)}100%{opacity:0;transform:scale(3.2) rotate(16deg)}}
-@keyframes videoFlare{0%{filter:brightness(.72) saturate(1.12)}45%{filter:brightness(1.8) saturate(1.6)}100%{filter:brightness(.25) saturate(.8)}}
-@media(max-width:600px){.velmora-intro-video{object-position:50% 60%;transform:scale(1.62);animation-name:lipCloseupMobile}.velmora-intro-wordmark{font-size:29px}}
+@keyframes imageFlare{0%{filter:brightness(.76) saturate(1.18)}45%{filter:brightness(1.8) saturate(1.6)}100%{filter:brightness(.12) saturate(.75)}}
+@media(max-width:600px){.velmora-intro-image{object-position:50% 60%;transform:scale(1.62);animation-name:lipCloseupMobile}.velmora-intro-wordmark{font-size:29px}}
 @keyframes lipCloseupMobile{0%{transform:scale(1.7)}65%{transform:scale(1.95)}100%{transform:scale(1.8)}}
-@media(prefers-reduced-motion:reduce){.velmora-intro-video{animation:none}.velmora-intro.is-blown .velmora-fireburst{animation:none;opacity:0}.velmora-intro{transition:none}}
+@media(prefers-reduced-motion:reduce){.velmora-intro-image{animation:none}.velmora-intro.is-blown .velmora-fireburst{animation:none;opacity:0}.velmora-intro{transition:none}}
 </style>
 </head>
 <body>
 
 <div class="velmora-intro" id="velmoraIntro" aria-label="VELMORA — cinematic intro" role="presentation">
-  <video class="velmora-intro-video" id="velmoraIntroVideo" autoplay muted playsinline preload="auto" poster="https://images.unsplash.com/photo-1533866254047-a8ec7410aa35?auto=format&fit=crop&w=1400&q=78" aria-hidden="true">
-    <source src="https://videos.pexels.com/video-files/7676210/7676210-hd_1920_1080_25fps.mp4" type="video/mp4">
-  </video>
+  <img class="velmora-intro-image" id="velmoraIntroImage" src="https://raw.githubusercontent.com/papastergiouueodwra-hash/velmora-premium-demo/main/lips.jpg" alt="" aria-hidden="true">
   <div class="velmora-fireburst" aria-hidden="true"></div>
   <div class="velmora-intro-copy"><div class="velmora-intro-wordmark">VELMORA</div><div class="velmora-intro-caption">Scent for the soul</div></div>
 </div>
@@ -175,18 +173,12 @@ $('#adminTrigger').onclick=()=>{$('#adminPanel').classList.add('open');renderAdm
 <script>
 (()=>{
  const intro=document.getElementById('velmoraIntro');
- const video=document.getElementById('velmoraIntroVideo');
- if(!intro||!video)return;
+ if(!intro)return;
  let ignited=false, removed=false;
  const reveal=()=>{if(removed)return;removed=true;intro.classList.add('is-gone');window.setTimeout(()=>intro.remove(),700)};
  const ignite=()=>{if(ignited||removed)return;ignited=true;intro.classList.add('is-blown');window.setTimeout(reveal,900)};
- video.addEventListener('loadedmetadata',()=>{try{video.playbackRate=1.55}catch(e){}},{once:true});
- video.addEventListener('ended',ignite,{once:true});
- video.addEventListener('error',()=>window.setTimeout(ignite,900),{once:true});
- const playAttempt=video.play();
- if(playAttempt&&typeof playAttempt.catch==='function')playAttempt.catch(()=>window.setTimeout(ignite,900));
- window.setTimeout(ignite,3900);
- window.setTimeout(reveal,5200);
+ window.setTimeout(ignite,3400);
+ window.setTimeout(reveal,4500);
 })();
 </script>
 
