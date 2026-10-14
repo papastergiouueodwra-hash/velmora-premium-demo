@@ -143,9 +143,19 @@ body{background:var(--paper);letter-spacing:.005em}
 @media(prefers-reduced-motion:reduce){.velmora-candle-flame,.velmora-candle-glow{animation:none}}
 
 
-/* Use the uploaded PixVerse clip as the complete intro; no simulated overlays. */
+/* Premium intro loading state and soft transition into the shop */
+.velmora-intro{background:#10090a;opacity:1;visibility:visible;transition:opacity 1.15s cubic-bezier(.22,.61,.36,1),visibility 1.15s ease}
+.velmora-intro.is-gone{opacity:0;visibility:hidden;pointer-events:none}
 .velmora-intro-video{z-index:2;object-fit:cover;object-position:center;background:#10090a}
 .velmora-intro:before,.velmora-intro-image,.velmora-candle,.velmora-fireburst,.velmora-intro-copy{display:none!important}
+.velmora-loading{position:absolute;z-index:5;left:50%;bottom:clamp(36px,8vh,70px);width:min(220px,52vw);transform:translateX(-50%);text-align:center;color:rgba(255,244,237,.9);font:9px 'DM Sans',sans-serif;letter-spacing:.28em;text-transform:uppercase;opacity:0;animation:loadingFadeIn .35s ease .22s forwards}
+.velmora-loading-track{height:2px;width:100%;margin-top:12px;overflow:hidden;background:rgba(255,244,237,.24);box-shadow:0 0 10px rgba(255,190,160,.08)}
+.velmora-loading-progress{height:100%;width:0;background:linear-gradient(90deg,#b77b70,#fff0df);box-shadow:0 0 8px rgba(255,220,200,.6);animation:velmoraLoad 2.3s cubic-bezier(.22,.61,.36,1) forwards}
+.velmora-loading-label{display:block;margin-top:9px;font-size:8px;letter-spacing:.2em;color:rgba(255,235,224,.72)}
+@keyframes velmoraLoad{0%{width:0}35%{width:58%}78%{width:88%}100%{width:100%}}
+@keyframes loadingFadeIn{to{opacity:1}}
+@media(max-width:600px){.velmora-loading{bottom:clamp(28px,7vh,56px);width:min(190px,58vw)}}
+@media(prefers-reduced-motion:reduce){.velmora-intro{transition:opacity .3s ease,visibility .3s ease}.velmora-loading-progress{animation-duration:.8s}}
 </style>
 </head>
 <body>
@@ -155,6 +165,11 @@ body{background:var(--paper);letter-spacing:.005em}
   <video class="velmora-intro-video" id="velmoraIntroVideo" autoplay muted playsinline preload="auto" aria-hidden="true">
     <source src="https://raw.githubusercontent.com/papastergiouueodwra-hash/velmora-premium-demo/main/PixVerse_V6_Fusion_540P_image1__image2_Create_.mp4" type="video/mp4">
   </video>
+  <div class="velmora-loading" aria-hidden="true">
+    <span>VELMORA</span>
+    <div class="velmora-loading-track"><div class="velmora-loading-progress"></div></div>
+    <span class="velmora-loading-label">Entering the ritual</span>
+  </div>
   <div class="velmora-candle" id="velmoraCandle" aria-hidden="true"><div class="velmora-candle-flame"></div><div class="velmora-candle-wick"></div><div class="velmora-candle-body"><span></span></div><div class="velmora-candle-glow"></div></div>
   <div class="velmora-fireburst" aria-hidden="true"></div>
   <div class="velmora-intro-copy"><div class="velmora-intro-wordmark">VELMORA</div><div class="velmora-intro-caption">Scent for the soul</div></div>
@@ -207,27 +222,26 @@ $('#adminTrigger').onclick=()=>{$('#adminPanel').classList.add('open');renderAdm
  const intro=document.getElementById('velmoraIntro');
  if(!intro)return;
  const video=document.getElementById('velmoraIntroVideo');
- let removed=false;
+ let removed=false, fallback;
  const reveal=()=>{
    if(removed)return;
    removed=true;
+   window.clearTimeout(fallback);
    intro.classList.add('is-gone');
-   window.setTimeout(()=>intro.remove(),700);
+   window.setTimeout(()=>intro.remove(),1250);
  };
- if(!video){window.setTimeout(reveal,9000);return;}
- // Let the uploaded clip play all the way through so its own fire transition completes.
- video.addEventListener('ended',()=>window.setTimeout(reveal,250),{once:true});
- video.addEventListener('error',()=>window.setTimeout(reveal,500),{once:true});
+ if(!video){fallback=window.setTimeout(reveal,9000);return;}
+ // Keep the progress animation fast, but let the full cinematic clip finish before fading away.
+ video.addEventListener('ended',()=>window.setTimeout(reveal,180),{once:true});
+ video.addEventListener('error',()=>window.setTimeout(reveal,700),{once:true});
  video.addEventListener('loadedmetadata',()=>{
    if(Number.isFinite(video.duration)&&video.duration>0){
-     window.setTimeout(reveal,Math.ceil(video.duration*1000)+1800);
+     fallback=window.setTimeout(reveal,Math.ceil(video.duration*1000)+1200);
    }
  },{once:true});
  const playAttempt=video.play();
- if(playAttempt&&typeof playAttempt.catch==='function'){
-   playAttempt.catch(()=>{ /* muted autoplay is normally allowed; leave the intro visible for manual browser retry */ });
- }
- window.setTimeout(reveal,12000);
+ if(playAttempt&&typeof playAttempt.catch==='function')playAttempt.catch(()=>{});
+ fallback=window.setTimeout(reveal,12000);
 })();
 </script>
 
