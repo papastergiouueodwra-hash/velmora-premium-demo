@@ -149,10 +149,11 @@ body{background:var(--paper);letter-spacing:.005em}
 .velmora-intro-video{z-index:2;object-fit:cover;object-position:center;background:#10090a}
 .velmora-intro:before,.velmora-intro-image,.velmora-candle,.velmora-fireburst,.velmora-intro-copy{display:none!important}
 .velmora-loading{position:absolute;z-index:5;left:50%;top:62%;width:min(340px,70vw);transform:translate(-50%,-50%);text-align:center;color:rgba(255,248,242,.98);font:11px 'DM Sans',sans-serif;letter-spacing:.34em;text-transform:uppercase;opacity:0;animation:loadingFadeIn .35s ease .22s forwards;text-shadow:0 2px 14px rgba(0,0,0,.7)}
-.velmora-loading-track{height:4px;width:100%;margin-top:15px;overflow:hidden;background:rgba(255,244,237,.38);box-shadow:0 0 14px rgba(255,190,160,.16);border:1px solid rgba(255,244,237,.25)}
-.velmora-loading-progress{height:100%;width:0;background:linear-gradient(90deg,#b77b70,#fff0df);box-shadow:0 0 12px rgba(255,220,200,.85);animation:velmoraLoad 2.3s cubic-bezier(.22,.61,.36,1) forwards}
+.velmora-loading-heading{display:flex;align-items:center;justify-content:space-between;font-size:10px;letter-spacing:.3em}
+#velmoraLoadingPercent{font-variant-numeric:tabular-nums;letter-spacing:.08em;color:#fff0df;min-width:38px;text-align:right}
+.velmora-loading-track{height:4px;width:100%;margin-top:13px;overflow:hidden;background:rgba(255,244,237,.28);box-shadow:0 0 14px rgba(255,190,160,.16);border:1px solid rgba(255,244,237,.25)}
+.velmora-loading-progress{height:100%;width:0;background:linear-gradient(90deg,#b77b70,#fff0df);box-shadow:0 0 12px rgba(255,220,200,.85);transition:width .07s linear}
 .velmora-loading-label{display:block;margin-top:10px;font-size:9px;letter-spacing:.24em;color:rgba(255,242,234,.92)}
-@keyframes velmoraLoad{0%{width:0}35%{width:58%}78%{width:88%}100%{width:100%}}
 @keyframes loadingFadeIn{to{opacity:1}}
 @media(max-width:600px){.velmora-loading{top:62%;width:min(290px,76vw);font-size:10px}.velmora-loading-track{height:4px}}
 @media(prefers-reduced-motion:reduce){.velmora-intro{transition:opacity .3s ease,visibility .3s ease}.velmora-loading-progress{animation-duration:.8s}}
@@ -269,8 +270,8 @@ body{background:#171214;color:var(--ink)}
     <source src="https://raw.githubusercontent.com/papastergiouueodwra-hash/velmora-premium-demo/main/PixVerse_V6_Fusion_540P_image1__image2_Create_.mp4" type="video/mp4">
   </video>
   <div class="velmora-loading" aria-hidden="true">
-    <span>VELMORA</span>
-    <div class="velmora-loading-track"><div class="velmora-loading-progress"></div></div>
+    <div class="velmora-loading-heading"><span>VELMORA</span><span id="velmoraLoadingPercent">0%</span></div>
+    <div class="velmora-loading-track"><div class="velmora-loading-progress" id="velmoraLoadingProgress"></div></div>
     <span class="velmora-loading-label">Entering the ritual</span>
   </div>
   <div class="velmora-candle" id="velmoraCandle" aria-hidden="true"><div class="velmora-candle-flame"></div><div class="velmora-candle-wick"></div><div class="velmora-candle-body"><span></span></div><div class="velmora-candle-glow"></div></div>
@@ -336,16 +337,30 @@ $('#adminTrigger').onclick=()=>{$('#adminPanel').classList.add('open');renderAdm
  const intro=document.getElementById('velmoraIntro');
  if(!intro)return;
  const video=document.getElementById('velmoraIntroVideo');
- let removed=false, fallback;
+ let removed=false, fallback, progressTimer;
+ const percent=document.getElementById('velmoraLoadingPercent');
+ const bar=document.getElementById('velmoraLoadingProgress');
+ const started=performance.now();
+ progressTimer=window.setInterval(()=>{
+   const elapsed=performance.now()-started;
+   const ratio=Math.min(1,elapsed/2300);
+   const value=Math.min(100,Math.round((1-Math.pow(1-ratio,2.2))*100));
+   if(percent)percent.textContent=value+'%';
+   if(bar)bar.style.width=value+'%';
+   if(value>=100)window.clearInterval(progressTimer);
+ },55);
  const reveal=()=>{
    if(removed)return;
    removed=true;
    window.clearTimeout(fallback);
+   window.clearInterval(progressTimer);
+   if(percent)percent.textContent='100%';
+   if(bar)bar.style.width='100%';
    intro.classList.add('is-gone');
    window.setTimeout(()=>intro.remove(),1250);
  };
  if(!video){fallback=window.setTimeout(reveal,9000);return;}
- // Keep the progress animation fast, but let the full cinematic clip finish before fading away.
+ // Percentage ticks up quickly while the cinematic video plays.
  video.addEventListener('ended',()=>window.setTimeout(reveal,180),{once:true});
  video.addEventListener('error',()=>window.setTimeout(reveal,700),{once:true});
  video.addEventListener('loadedmetadata',()=>{
