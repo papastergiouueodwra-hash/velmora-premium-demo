@@ -1,4 +1,4 @@
-const { json, clearSession, sameOrigin } = require('../_lib/auth');
+const { json, clearSession, sameOrigin } = require('../../lib/auth');
 
 module.exports = function handler(req, res) {
   if (req.method !== 'POST') {
