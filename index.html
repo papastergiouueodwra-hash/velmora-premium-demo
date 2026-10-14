@@ -123,13 +123,13 @@ body{background:var(--paper);letter-spacing:.005em}
 .velmora-intro-image{z-index:0}
 .velmora-intro-video{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;background:#10090a}
 .velmora-intro-video.is-hidden{display:none}
-.velmora-candle{position:absolute;z-index:3;left:calc(50% + clamp(78px,16vw,205px));top:48%;width:48px;height:142px;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 0 12px rgba(255,117,39,.22));animation:candleAppear .5s ease-out both}
-.velmora-candle-body{position:absolute;bottom:0;left:5px;width:38px;height:93px;border-radius:5px 5px 7px 7px;background:linear-gradient(90deg,#9c6d50 0%,#f2d9b9 23%,#fff0d8 48%,#c99b76 78%,#7f5140 100%);box-shadow:inset 0 2px 4px #fff7e0,0 7px 15px #0004}
-.velmora-candle-body:before{content:"";position:absolute;left:0;right:0;top:-4px;height:10px;border-radius:50%;background:radial-gradient(ellipse,#4b2924 0 15%,#d3ae8b 28%,#fff0d8 66%,#a87959 100%)}
-.velmora-candle-body span{position:absolute;left:5px;right:5px;top:12px;height:60px;background:linear-gradient(90deg,transparent,#fff8e7aa,transparent);border-radius:50%}
-.velmora-candle-wick{position:absolute;z-index:2;left:23px;bottom:91px;width:2px;height:12px;background:#39201a;border-radius:2px}
-.velmora-candle-flame{position:absolute;z-index:4;left:14px;top:0;width:23px;height:39px;transform-origin:50% 90%;border-radius:55% 45% 55% 45%;background:radial-gradient(ellipse at 50% 72%,#fff8cf 0 13%,#ffe17b 27%,#ff9a36 56%,#e94a1d 77%,transparent 79%);filter:drop-shadow(0 0 7px #ff8c38) drop-shadow(0 0 18px #ff5a22aa);animation:candleFlicker .16s infinite alternate}
-.velmora-candle-glow{position:absolute;left:-22px;top:-13px;width:92px;height:83px;border-radius:50%;background:radial-gradient(ellipse,rgba(255,139,49,.24),transparent 70%);z-index:-1;animation:glowFlicker .22s infinite alternate}
+.velmora-candle{position:absolute;z-index:3;left:clamp(48px,13vw,190px);top:53%;width:clamp(78px,8vw,112px);height:clamp(220px,34vh,310px);transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45));animation:candleAppear .5s ease-out both}
+.velmora-candle-body{position:absolute;bottom:0;left:8%;width:84%;height:76%;border-radius:13px 13px 9px 9px;background:linear-gradient(90deg,#4e3930 0%,#8c6b54 9%,#c9ad8e 20%,#f5e5cd 34%,#fff4df 47%,#e6cdb0 61%,#b48b6c 82%,#604538 100%);box-shadow:inset 4px 0 8px #fff5e488,inset -5px 0 9px #38231d55,0 10px 20px #0006}
+.velmora-candle-body:before{content:"";position:absolute;left:0;right:0;top:-7px;height:20px;border-radius:50%;background:radial-gradient(ellipse at 50% 42%,#34211b 0 10%,#71503b 17%,#c5a17e 31%,#f8e7cd 58%,#a47b5d 82%,#5b3b2c 100%);box-shadow:inset 0 2px 4px #fff5df88}
+.velmora-candle-body span{position:absolute;left:9%;right:13%;top:12%;height:72%;background:linear-gradient(90deg,transparent,#fff8e788 35%,#fff8e7a8 48%,transparent);border-radius:50%;filter:blur(2px)}
+.velmora-candle-wick{position:absolute;z-index:2;left:49%;bottom:74%;width:3px;height:clamp(14px,3vh,21px);background:linear-gradient(90deg,#1c100d,#5b3525,#21120e);border-radius:2px;transform:rotate(4deg)}
+.velmora-candle-flame{position:absolute;z-index:4;left:calc(50% - 18px);top:-3px;width:36px;height:clamp(48px,8vh,64px);transform-origin:50% 90%;border-radius:54% 46% 48% 52% / 70% 70% 30% 30%;background:radial-gradient(ellipse at 50% 76%,#fffdf0 0 12%,#fff0a3 22%,#ffc14e 43%,#ff7a24 64%,#db3c19 76%,transparent 80%);filter:drop-shadow(0 0 8px #ff9a3d) drop-shadow(0 0 23px #ff5a22cc);animation:candleFlicker .16s infinite alternate}
+.velmora-candle-glow{position:absolute;left:-35%;top:-22%;width:170%;height:52%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,153,62,.33),rgba(255,92,31,.12) 34%,transparent 72%);z-index:-1;animation:glowFlicker .22s infinite alternate}
 .velmora-intro.is-blown .velmora-candle-flame{animation:candleExtinguish .28s ease-out forwards}
 .velmora-intro.is-blown .velmora-candle-glow{animation:glowOut .35s ease-out forwards}
 .velmora-intro.is-blown .velmora-candle{animation:candleDisappear .5s ease-out forwards}
@@ -139,7 +139,7 @@ body{background:var(--paper);letter-spacing:.005em}
 @keyframes glowOut{to{opacity:0;transform:scale(.3)}}
 @keyframes candleDisappear{to{opacity:0;transform:translate(-50%,-50%) scale(.96)}}
 @keyframes candleAppear{from{opacity:0;transform:translate(-50%,-45%)}to{opacity:1;transform:translate(-50%,-50%)}}
-@media(max-width:600px){.velmora-intro-video{object-position:50% 55%}.velmora-candle{left:68%;top:54%;transform:translate(-50%,-50%) scale(.76)}}
+@media(max-width:600px){.velmora-intro-video{object-position:50% 55%}.velmora-candle{left:clamp(42px,15vw,76px);top:56%;width:clamp(66px,18vw,86px);height:clamp(190px,31vh,250px);transform:translate(-50%,-50%)}}
 @media(prefers-reduced-motion:reduce){.velmora-candle-flame,.velmora-candle-glow{animation:none}}
 
 </style>
