@@ -365,11 +365,16 @@ $('#closeAdmin').onclick=()=>$('#adminPanel').classList.remove('open');$('#saveA
  // Percentage ticks up quickly while the cinematic video plays.
  video.addEventListener('ended',()=>window.setTimeout(reveal,180),{once:true});
  video.addEventListener('error',()=>window.setTimeout(reveal,700),{once:true});
- video.addEventListener('loadedmetadata',()=>{
-   if(Number.isFinite(video.duration)&&video.duration>0){
-     fallback=window.setTimeout(reveal,Math.ceil(video.duration*1000)+1200);
-   }
- },{once:true});
+ let durationFallbackSet=false;
+ const setDurationFallback=()=>{
+   if(durationFallbackSet||!Number.isFinite(video.duration)||video.duration<=0)return;
+   durationFallbackSet=true;
+   window.clearTimeout(fallback);
+   // Let the entire clip play, including the final fire wipe, before revealing the shop.
+   fallback=window.setTimeout(reveal,Math.ceil(video.duration*1000)+1800);
+ };
+ video.addEventListener('loadedmetadata',setDurationFallback,{once:true});
+ video.addEventListener('durationchange',setDurationFallback,{once:true});
  // Start muted inline playback as early as possible on mobile browsers.
  // A browser may still block autoplay due to its own media policy.
  video.controls=false;
@@ -399,7 +404,9 @@ $('#closeAdmin').onclick=()=>$('#adminPanel').classList.remove('open');$('#saveA
  // Explicit load helps Safari/iOS begin fetching after the muted/inline flags are set.
  video.load();
  attemptPlay();
- fallback=window.setTimeout(reveal,12000);
+ // Do not use a short fixed timeout: it cut off the fire ending on longer/mobile loads.
+ // This is only a safety exit if the video never reports its duration.
+ fallback=window.setTimeout(()=>{if(!durationFallbackSet)reveal()},30000);
 })();
 </script>
 
