@@ -100,9 +100,36 @@ body{background:var(--paper);letter-spacing:.005em}
 @media(max-width:480px){.announcement{font-size:8px;letter-spacing:.14em}.nav{padding:17px 4%}.brand{font-size:24px}.brand small{font-size:7px}.bag{font-size:8px;padding:11px 12px}.hero-copy{padding:52px 6%}.hero h1{font-size:47px}.hero-image{min-height:340px}.section{padding:56px 5%}.section-head{margin-bottom:29px}.category,.category img{min-height:270px}.story-image{height:350px}.newsletter{padding:50px 5%}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
+
+/* Fast cinematic intro: one short visual, then reveal the existing shop */
+.velmora-intro{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;background:#160d0f;opacity:1;visibility:visible;transition:opacity .55s ease,visibility .55s ease}
+.velmora-intro.is-gone{opacity:0;visibility:hidden;pointer-events:none}
+.velmora-intro-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 58%;filter:brightness(.78) saturate(.88);animation:introImage 2.15s ease both}
+.velmora-intro:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(20,8,10,.42),rgba(20,8,10,.03) 65%),linear-gradient(0deg,rgba(20,8,10,.45),transparent 60%)}
+.velmora-intro-copy{position:absolute;z-index:2;bottom:clamp(34px,8vh,76px);left:0;right:0;text-align:center;color:#fbf4ed;padding:20px}
+.velmora-intro-wordmark{font:400 clamp(25px,4vw,38px)/1.1 'Playfair Display',serif;letter-spacing:.28em;text-indent:.28em}
+.velmora-intro-caption{font:9px 'DM Sans',sans-serif;letter-spacing:.3em;text-transform:uppercase;margin-top:12px;color:#ead6c7}
+.velmora-intro-flame{position:absolute;z-index:2;left:50%;top:58%;width:13px;height:27px;transform:translate(-50%,-50%);border-radius:70% 15% 65% 50%;background:radial-gradient(ellipse at 50% 70%,#fff7ce 0 13%,#ffd16b 35%,#ef692c 65%,transparent 75%);filter:drop-shadow(0 0 12px #ff9d4d);animation:flameDance .18s infinite alternate;transform-origin:50% 90%;opacity:.92}
+.velmora-intro-smoke{position:absolute;z-index:3;left:50%;top:56%;width:18px;height:36px;opacity:0;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(ellipse,#c5b6b0aa 0, #8b777455 45%,transparent 72%);filter:blur(5px)}
+.velmora-intro.is-blown .velmora-intro-flame{animation:flameOut .32s ease-in forwards}
+.velmora-intro.is-blown .velmora-intro-smoke{animation:smokeRise .75s ease-out forwards}
+@keyframes flameDance{from{rotate:-5deg;scale:.92 1.05}to{rotate:5deg;scale:1.08 .94}}
+@keyframes flameOut{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}65%{opacity:.8;transform:translate(-50%,-50%) scale(.35,1.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(.05,.1)}}
+@keyframes smokeRise{0%{opacity:0;transform:translate(-50%,-30%) scale(.4)}35%{opacity:.8}100%{opacity:0;transform:translate(-15%,-170%) scale(2.5,2.1)}}
+@keyframes introImage{from{transform:scale(1.035)}to{transform:scale(1)}}
+@media(max-width:600px){.velmora-intro-photo{object-position:52% 58%}.velmora-intro-flame{top:57%;width:10px;height:22px}.velmora-intro-smoke{top:55%}}
+@media(prefers-reduced-motion:reduce){.velmora-intro-photo,.velmora-intro-flame,.velmora-intro.is-blown .velmora-intro-flame,.velmora-intro.is-blown .velmora-intro-smoke{animation:none}.velmora-intro{transition:none}}
+
 </style>
 </head>
 <body>
+
+<div class="velmora-intro" id="velmoraIntro" aria-label="VELMORA — intro" role="presentation">
+  <img class="velmora-intro-photo" id="velmoraIntroPhoto" src="https://images.unsplash.com/photo-1533866254047-a8ec7410aa35?auto=format&fit=crop&w=1400&q=78" alt="" fetchpriority="high">
+  <span class="velmora-intro-flame" aria-hidden="true"></span><span class="velmora-intro-smoke" aria-hidden="true"></span>
+  <div class="velmora-intro-copy"><div class="velmora-intro-wordmark">VELMORA</div><div class="velmora-intro-caption">Scent for the soul</div></div>
+</div>
+
 <div class="announcement">A little ritual, a softer everyday · Δωρεάν αποστολή άνω των 55€</div>
 <header class="header"><nav class="nav"><a class="brand" href="#">VELMORA<small>SCENT FOR THE SOUL</small></a><div class="navlinks"><a href="#shop">Shop</a><a href="#story">Η φιλοσοφία μας</a><a href="#gifts">Gift sets</a></div><div><button class="bag" id="openCart">Τσάντα (<span id="cartCount">0</span>)</button></div></nav></header>
 <main>
@@ -144,4 +171,19 @@ $('#assistantToggle').onclick=()=>$('#chat').classList.toggle('open');$('#closeC
 function renderAdmin(){const saved=JSON.parse(localStorage.getItem('velmoraDemoProducts')||'null');if(saved)products=originalProducts.map(p=>({...p,...saved.find(s=>s.id===p.id)}));$('#adminRows').innerHTML=products.map(p=>'<div class="admin-row"><div><strong>'+p.name+'</strong><small>'+p.catLabel+'</small></div><div><label>Τιμή €<input type="number" min="0" step=".5" value="'+p.price+'" data-price="'+p.id+'"></label></div><div><label><input type="checkbox" data-stock="'+p.id+'" '+(p.available?'checked':'')+'> Διαθέσιμο</label></div></div>').join('')}
 $('#adminTrigger').onclick=()=>{$('#adminPanel').classList.add('open');renderAdmin()};$('#closeAdmin').onclick=()=>$('#adminPanel').classList.remove('open');$('#saveAdmin').onclick=()=>{products=products.map(p=>({...p,price:Math.max(0,Number($('[data-price="'+p.id+'"]').value)||0),available:$('[data-stock="'+p.id+'"]').checked}));localStorage.setItem('velmoraDemoProducts',JSON.stringify(products.map(({id,price,available})=>({id,price,available}))));renderProducts();renderAdmin();toast('Οι αλλαγές αποθηκεύτηκαν σε αυτόν τον browser.')};$('#resetAdmin').onclick=()=>{localStorage.removeItem('velmoraDemoProducts');products=originalProducts.map(p=>({...p,available:true}));renderProducts();renderAdmin();toast('Επαναφέρθηκαν τα αρχικά στοιχεία.')};const saved=JSON.parse(localStorage.getItem('velmoraDemoProducts')||'null');if(saved)products=originalProducts.map(p=>({...p,...saved.find(s=>s.id===p.id)}));renderProducts();renderCart();
 </script>
+
+<script>
+(()=> {
+ const intro=document.getElementById('velmoraIntro');
+ if(!intro)return;
+ let finished=false;
+ const finish=()=>{if(finished)return;finished=true;intro.classList.add('is-blown');window.setTimeout(()=>intro.classList.add('is-gone'),420);window.setTimeout(()=>intro.remove(),1050)};
+ const start=()=>window.setTimeout(finish,1450);
+ const photo=document.getElementById('velmoraIntroPhoto');
+ if(photo && photo.complete) start();
+ else if(photo){photo.addEventListener('load',start,{once:true});photo.addEventListener('error',()=>window.setTimeout(finish,300),{once:true});window.setTimeout(finish,1900)}
+ window.setTimeout(finish,2300);
+})();
+</script>
+
 </body></html>
