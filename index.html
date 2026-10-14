@@ -370,9 +370,9 @@ $('#closeAdmin').onclick=()=>$('#adminPanel').classList.remove('open');$('#saveA
  };
  if(mobile){
    // Mobile uses the animated WebP so the intro is not blocked by video autoplay rules.
-   if(!animation){fallback=window.setTimeout(reveal,9000);return;}
-   // The animated WebP loops by default in mobile browsers. Hide the intro after one source-clip cycle so the candle cannot extinguish a second time.
-   const onePlayMs=5000;
+   if(!animation){fallback=window.setTimeout(reveal,4000);return;}
+   // The animated WebP loops by default in mobile browsers. Close the intro after 4 seconds to avoid a second loop.
+   const onePlayMs=4000;
    animation.addEventListener('load',()=>{
      if(!removed){window.clearTimeout(fallback);fallback=window.setTimeout(reveal,onePlayMs);}
    },{once:true});
