@@ -5,7 +5,9 @@ A responsive, single-page storefront concept in Greek. The brand, products, pric
 ## Included in the demo
 - Responsive premium storefront and category filters
 - Product detail modals, demo shopping bag and quantity controls
-- Guided scent assistant with scripted sample replies (not connected to an external AI model)
+- Interactive scent consultant demo with guided preference, use-case and budget questions
+- Product recommendations ranked from the current demo catalogue and availability
+- No external AI API or API key required; recommendations run locally in the browser
 - Demo admin panel to change prices and availability
 - Admin changes are saved only in the current browser's localStorage
 
