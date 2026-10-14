@@ -1,4 +1,4 @@
-const { json, sameOrigin } = require('./_lib/auth');
+const { json, sameOrigin } = require('../lib/auth');
 
 function clean(value, max = 300) {
   return String(value == null ? '' : value).trim().slice(0, max);
