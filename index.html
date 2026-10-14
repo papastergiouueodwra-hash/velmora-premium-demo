@@ -247,6 +247,15 @@ body{background:#171214;color:var(--ink)}
 .scent-options{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 4px}.scent-option{border:1px solid rgba(132,38,58,.45);background:rgba(101,27,44,.18);color:var(--text,#F1E8DF);border-radius:30px;padding:8px 11px;font:inherit;font-size:11px;cursor:pointer;transition:.2s}.scent-option:hover{background:#651B2C;border-color:#84263A}.scent-results{display:grid;gap:9px;margin:10px 0}.scent-card{display:grid;grid-template-columns:68px 1fr;gap:10px;align-items:center;padding:9px;border:1px solid rgba(183,168,160,.24);border-radius:12px;background:rgba(255,255,255,.035)}.scent-card img{width:68px;height:78px;object-fit:cover;border-radius:8px}.scent-card h4{font:500 13px 'Playfair Display',serif;margin:0 0 4px;color:#F1E8DF}.scent-card p{font-size:10px;line-height:1.5;margin:0 0 5px;color:#B7A8A0}.scent-card strong{font-size:11px;color:#F1E8DF}.scent-card button{display:block;margin-top:7px;border:1px solid #84263A;background:#651B2C;color:#fff;padding:6px 9px;border-radius:20px;font-size:10px;cursor:pointer}.scent-note{font-size:10px;line-height:1.5;color:#B7A8A0;margin:6px 0}
 
 .navlinks .nav-assistant{color:#84263A;display:inline-flex;align-items:center;gap:5px;font-weight:600}.navlinks .nav-assistant span{font-size:15px;color:#62694A}.navlinks .nav-assistant:hover{color:#B54A60}
+
+/* Navigation alignment and consistent light text */
+.header .nav{display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,2vw,28px);flex-wrap:nowrap}
+.header .navlinks{display:flex;flex:1;align-items:center;justify-content:center;gap:clamp(10px,1.7vw,24px);min-width:0;flex-wrap:nowrap;white-space:nowrap}
+.header .navlinks a,.header .navlinks .nav-assistant{color:#F1E8DF!important;white-space:nowrap;line-height:1.2}
+.header .navlinks .nav-assistant{display:inline-flex;align-items:center;gap:5px;font-weight:600}
+.header .navlinks .nav-assistant span{color:#F1E8DF!important}
+.header .navlinks a:hover,.header .navlinks .nav-assistant:hover{color:#D9B8B0!important}
+@media(max-width:800px){.header .navlinks{display:none}}
 </style>
 </head>
 <body>
