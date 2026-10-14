@@ -142,6 +142,10 @@ body{background:var(--paper);letter-spacing:.005em}
 @media(max-width:600px){.velmora-intro-video{object-position:50% 55%}.velmora-candle{left:clamp(65px,20vw,100px);top:56%;width:clamp(78px,21vw,105px);height:clamp(220px,36vh,290px);transform:translate(-50%,-50%)}}
 @media(prefers-reduced-motion:reduce){.velmora-candle-flame,.velmora-candle-glow{animation:none}}
 
+
+/* Use the uploaded PixVerse clip as the complete intro; no simulated overlays. */
+.velmora-intro-video{z-index:2;object-fit:cover;object-position:center;background:#10090a}
+.velmora-intro:before,.velmora-intro-image,.velmora-candle,.velmora-fireburst,.velmora-intro-copy{display:none!important}
 </style>
 </head>
 <body>
@@ -149,7 +153,7 @@ body{background:var(--paper);letter-spacing:.005em}
 <div class="velmora-intro" id="velmoraIntro" aria-label="VELMORA — cinematic intro" role="presentation">
   <img class="velmora-intro-image" id="velmoraIntroImage" src="https://raw.githubusercontent.com/papastergiouueodwra-hash/velmora-premium-demo/main/lips.jpg" alt="" aria-hidden="true">
   <video class="velmora-intro-video" id="velmoraIntroVideo" autoplay muted playsinline preload="auto" aria-hidden="true">
-    <source src="https://raw.githubusercontent.com/papastergiouueodwra-hash/velmora-premium-demo/main/dreamina-2026-10-14-3726-Extreme%20close-up%20of%20glossy,%20deep%20red%20fem....mp4" type="video/mp4">
+    <source src="https://raw.githubusercontent.com/papastergiouueodwra-hash/velmora-premium-demo/main/PixVerse_V6_Fusion_540P_image1__image2_Create_.mp4" type="video/mp4">
   </video>
   <div class="velmora-candle" id="velmoraCandle" aria-hidden="true"><div class="velmora-candle-flame"></div><div class="velmora-candle-wick"></div><div class="velmora-candle-body"><span></span></div><div class="velmora-candle-glow"></div></div>
   <div class="velmora-fireburst" aria-hidden="true"></div>
@@ -203,24 +207,27 @@ $('#adminTrigger').onclick=()=>{$('#adminPanel').classList.add('open');renderAdm
  const intro=document.getElementById('velmoraIntro');
  if(!intro)return;
  const video=document.getElementById('velmoraIntroVideo');
- let ignited=false, removed=false;
- const reveal=()=>{if(removed)return;removed=true;intro.classList.add('is-gone');window.setTimeout(()=>intro.remove(),700)};
- const ignite=()=>{if(ignited||removed)return;ignited=true;intro.classList.add('is-blown');window.setTimeout(reveal,950)};
- // Start the candle blow-out near the end of the opening clip; keep a timed fallback for autoplay restrictions.
- const startFallback=window.setTimeout(ignite,3600);
- if(video){
-   video.addEventListener('timeupdate',()=>{
-     if(video.duration && video.currentTime >= Math.min(3.6, Math.max(1.8, video.duration-1.1))) ignite();
-   });
-   video.addEventListener('ended',ignite,{once:true});
-   video.addEventListener('error',()=>{
-     video.classList.add('is-hidden');
-     window.clearTimeout(startFallback);
-   },{once:true});
-   const playAttempt=video.play();
-   if(playAttempt && typeof playAttempt.catch==='function') playAttempt.catch(()=>{});
+ let removed=false;
+ const reveal=()=>{
+   if(removed)return;
+   removed=true;
+   intro.classList.add('is-gone');
+   window.setTimeout(()=>intro.remove(),700);
+ };
+ if(!video){window.setTimeout(reveal,9000);return;}
+ // Let the uploaded clip play all the way through so its own fire transition completes.
+ video.addEventListener('ended',()=>window.setTimeout(reveal,250),{once:true});
+ video.addEventListener('error',()=>window.setTimeout(reveal,500),{once:true});
+ video.addEventListener('loadedmetadata',()=>{
+   if(Number.isFinite(video.duration)&&video.duration>0){
+     window.setTimeout(reveal,Math.ceil(video.duration*1000)+1800);
+   }
+ },{once:true});
+ const playAttempt=video.play();
+ if(playAttempt&&typeof playAttempt.catch==='function'){
+   playAttempt.catch(()=>{ /* muted autoplay is normally allowed; leave the intro visible for manual browser retry */ });
  }
- window.setTimeout(reveal,5200);
+ window.setTimeout(reveal,12000);
 })();
 </script>
 
