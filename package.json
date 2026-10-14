@@ -1,0 +1,12 @@
+{
+  "name": "velmora-premium-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VELMORA storefront demo and CRM",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2"
+  }
+}
