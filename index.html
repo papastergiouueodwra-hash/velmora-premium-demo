@@ -118,12 +118,40 @@ body{background:var(--paper);letter-spacing:.005em}
 @media(max-width:600px){.velmora-intro-image{object-position:50% 60%;transform:scale(1.62);animation-name:lipCloseupMobile}.velmora-intro-wordmark{font-size:29px}}
 @keyframes lipCloseupMobile{0%{transform:scale(1.7)}65%{transform:scale(1.95)}100%{transform:scale(1.8)}}
 @media(prefers-reduced-motion:reduce){.velmora-intro-image{animation:none}.velmora-intro.is-blown .velmora-fireburst{animation:none;opacity:0}.velmora-intro{transition:none}}
+
+/* Real Dreamina clip + a small candle overlay that extinguishes before the fire wipe */
+.velmora-intro-image{z-index:0}
+.velmora-intro-video{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;background:#10090a}
+.velmora-intro-video.is-hidden{display:none}
+.velmora-candle{position:absolute;z-index:3;left:calc(50% + clamp(78px,16vw,205px));top:48%;width:48px;height:142px;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 0 12px rgba(255,117,39,.22));animation:candleAppear .5s ease-out both}
+.velmora-candle-body{position:absolute;bottom:0;left:5px;width:38px;height:93px;border-radius:5px 5px 7px 7px;background:linear-gradient(90deg,#9c6d50 0%,#f2d9b9 23%,#fff0d8 48%,#c99b76 78%,#7f5140 100%);box-shadow:inset 0 2px 4px #fff7e0,0 7px 15px #0004}
+.velmora-candle-body:before{content:"";position:absolute;left:0;right:0;top:-4px;height:10px;border-radius:50%;background:radial-gradient(ellipse,#4b2924 0 15%,#d3ae8b 28%,#fff0d8 66%,#a87959 100%)}
+.velmora-candle-body span{position:absolute;left:5px;right:5px;top:12px;height:60px;background:linear-gradient(90deg,transparent,#fff8e7aa,transparent);border-radius:50%}
+.velmora-candle-wick{position:absolute;z-index:2;left:23px;bottom:91px;width:2px;height:12px;background:#39201a;border-radius:2px}
+.velmora-candle-flame{position:absolute;z-index:4;left:14px;top:0;width:23px;height:39px;transform-origin:50% 90%;border-radius:55% 45% 55% 45%;background:radial-gradient(ellipse at 50% 72%,#fff8cf 0 13%,#ffe17b 27%,#ff9a36 56%,#e94a1d 77%,transparent 79%);filter:drop-shadow(0 0 7px #ff8c38) drop-shadow(0 0 18px #ff5a22aa);animation:candleFlicker .16s infinite alternate}
+.velmora-candle-glow{position:absolute;left:-22px;top:-13px;width:92px;height:83px;border-radius:50%;background:radial-gradient(ellipse,rgba(255,139,49,.24),transparent 70%);z-index:-1;animation:glowFlicker .22s infinite alternate}
+.velmora-intro.is-blown .velmora-candle-flame{animation:candleExtinguish .28s ease-out forwards}
+.velmora-intro.is-blown .velmora-candle-glow{animation:glowOut .35s ease-out forwards}
+.velmora-intro.is-blown .velmora-candle{animation:candleDisappear .5s ease-out forwards}
+@keyframes candleFlicker{from{transform:rotate(-4deg) scale(.96,1)}to{transform:rotate(4deg) scale(1.04,.98)}}
+@keyframes glowFlicker{from{opacity:.65;transform:scale(.96)}to{opacity:1;transform:scale(1.05)}}
+@keyframes candleExtinguish{0%{opacity:1;transform:scale(1)}55%{opacity:.75;transform:scale(.75,.9)}100%{opacity:0;transform:scale(.2,.45)}}
+@keyframes glowOut{to{opacity:0;transform:scale(.3)}}
+@keyframes candleDisappear{to{opacity:0;transform:translate(-50%,-50%) scale(.96)}}
+@keyframes candleAppear{from{opacity:0;transform:translate(-50%,-45%)}to{opacity:1;transform:translate(-50%,-50%)}}
+@media(max-width:600px){.velmora-intro-video{object-position:50% 55%}.velmora-candle{left:68%;top:54%;transform:translate(-50%,-50%) scale(.76)}}
+@media(prefers-reduced-motion:reduce){.velmora-candle-flame,.velmora-candle-glow{animation:none}}
+
 </style>
 </head>
 <body>
 
 <div class="velmora-intro" id="velmoraIntro" aria-label="VELMORA — cinematic intro" role="presentation">
   <img class="velmora-intro-image" id="velmoraIntroImage" src="https://raw.githubusercontent.com/papastergiouueodwra-hash/velmora-premium-demo/main/lips.jpg" alt="" aria-hidden="true">
+  <video class="velmora-intro-video" id="velmoraIntroVideo" autoplay muted playsinline preload="auto" aria-hidden="true">
+    <source src="https://raw.githubusercontent.com/papastergiouueodwra-hash/velmora-premium-demo/main/dreamina-2026-10-14-3726-Extreme%20close-up%20of%20glossy,%20deep%20red%20fem....mp4" type="video/mp4">
+  </video>
+  <div class="velmora-candle" id="velmoraCandle" aria-hidden="true"><div class="velmora-candle-flame"></div><div class="velmora-candle-wick"></div><div class="velmora-candle-body"><span></span></div><div class="velmora-candle-glow"></div></div>
   <div class="velmora-fireburst" aria-hidden="true"></div>
   <div class="velmora-intro-copy"><div class="velmora-intro-wordmark">VELMORA</div><div class="velmora-intro-caption">Scent for the soul</div></div>
 </div>
@@ -174,11 +202,25 @@ $('#adminTrigger').onclick=()=>{$('#adminPanel').classList.add('open');renderAdm
 (()=>{
  const intro=document.getElementById('velmoraIntro');
  if(!intro)return;
+ const video=document.getElementById('velmoraIntroVideo');
  let ignited=false, removed=false;
  const reveal=()=>{if(removed)return;removed=true;intro.classList.add('is-gone');window.setTimeout(()=>intro.remove(),700)};
- const ignite=()=>{if(ignited||removed)return;ignited=true;intro.classList.add('is-blown');window.setTimeout(reveal,900)};
- window.setTimeout(ignite,3400);
- window.setTimeout(reveal,4500);
+ const ignite=()=>{if(ignited||removed)return;ignited=true;intro.classList.add('is-blown');window.setTimeout(reveal,950)};
+ // Start the candle blow-out near the end of the opening clip; keep a timed fallback for autoplay restrictions.
+ const startFallback=window.setTimeout(ignite,3600);
+ if(video){
+   video.addEventListener('timeupdate',()=>{
+     if(video.duration && video.currentTime >= Math.min(3.6, Math.max(1.8, video.duration-1.1))) ignite();
+   });
+   video.addEventListener('ended',ignite,{once:true});
+   video.addEventListener('error',()=>{
+     video.classList.add('is-hidden');
+     window.clearTimeout(startFallback);
+   },{once:true});
+   const playAttempt=video.play();
+   if(playAttempt && typeof playAttempt.catch==='function') playAttempt.catch(()=>{});
+ }
+ window.setTimeout(reveal,5200);
 })();
 </script>
 
